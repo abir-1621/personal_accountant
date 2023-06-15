@@ -19,23 +19,26 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
     return Reminder(
       title: fields[0] as String,
       description: fields[1] as String?,
-      dateTime: fields[2] as DateTime?,
+      dateTime:  fields[2] != null ? DateTime.parse(fields[2] as String) : null,
       isDone: fields[3] as bool,
+      type: fields[4] as ReminderType
     );
   }
 
   @override
   void write(BinaryWriter writer, Reminder obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
       ..write(obj.description)
       ..writeByte(2)
-      ..write(obj.dateTime)
+      ..write(obj.dateTime?.toIso8601String())
       ..writeByte(3)
-      ..write(obj.isDone);
+      ..write(obj.isDone)
+      ..writeByte(4)
+      ..write(obj.type);
   }
 
   @override
@@ -47,4 +50,6 @@ class ReminderAdapter extends TypeAdapter<Reminder> {
       other is ReminderAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
+
+
 }

@@ -2,7 +2,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
 import '../model/reminder_model.dart';
 
 class NotificationService {
@@ -18,7 +17,7 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
 
     AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@mipmap/ic_notification');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     // IOSInitializationSettings iosInitializationSettings =
     //     IOSInitializationSettings();
@@ -39,7 +38,7 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       enableVibration: true,
-      icon: '@mipmap/ic_notification',
+      icon: '@mipmap/launcher_icon',
       groupKey: 'com.varadgauthankar.simple_reminder.REMINDER',
     );
   }

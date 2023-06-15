@@ -8,11 +8,13 @@ import 'package:personal_accountant/utils/color_scheme.dart';
 import 'package:provider/provider.dart';
 
 import 'model/reminder_model.dart';
+import 'model/reminder_type_adapter.dart';
 
 
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ReminderAdapter());
+  Hive.registerAdapter(ReminderTypeAdapter()); // Register the adapter for ReminderType
   await Hive.openBox<Reminder>('reminders');
   runApp(MyApp());
 }

@@ -6,101 +6,95 @@ import 'my_card.dart';
 
 class ReminderCard extends StatelessWidget {
   final Reminder reminder;
+
   const ReminderCard(this.reminder);
 
   @override
   Widget build(BuildContext context) {
     return MyCard(
+      onTap: () {  },
       child: Stack(
-        alignment: Alignment.bottomRight,
         children: [
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${reminder.title} (${reminder.type.toString().split('.').last ?? ''})',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                if (reminder.description != null) ...[
+                  SizedBox(height: 6.0),
                   Text(
-                    reminder.title,
+                    reminder.description!,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: TextStyle(
-                      height: 1.1,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                    style: TextStyle(fontSize: 16, height: 1.2),
                   ),
-                  //add a little space between title and desc.
-                  reminder.description != null
-                      ? SizedBox(height: 6.0)
-                      : SizedBox.shrink(),
-
-                  // description
-                  reminder.description != null
-                      ? Text(
-                          reminder.description!,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: TextStyle(fontSize: 16, height: 1.2),
-                        )
-                      : SizedBox.shrink(),
                 ],
-              ),
+                if (reminder.dateTime != null) ...[
+                  SizedBox(height: 8.0),
+                  Row(
+                    children: [
+                      Hero(
+                        tag: reminder.key,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Chip(
+                            backgroundColor:
+                            Theme.of(context).colorScheme.primary,
+                            label: Text(
+                              getFormattedDate(reminder.dateTime!),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 6.0),
+                      Chip(
+                        backgroundColor:
+                        Theme.of(context).colorScheme.tertiary,
+                        label: Text(
+                          'weekly',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onTertiary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ),
-
-          // date of the reminder
-          reminder.dateTime != null
-              ? _dateTimeChip(context)
-              : SizedBox.shrink(),
+          Positioned(
+            top: 8.0,
+            right: 8.0,
+            child: ElevatedButton(
+              onPressed: () {
+                toPage(
+                  context,
+                  ReminderPage(isEdit: true, reminder: reminder),
+                );
+              },
+              child: Text('Edit'),
+            ),
+          ),
         ],
       ),
-      onTap: () {
-        toPage(
-          context,
-          ReminderPage(isEdit: true, reminder: reminder),
-        );
-      },
-    );
-  }
-
-  Widget _dateTimeChip(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Hero(
-          tag: reminder.key,
-          child: Material(
-            color: Colors.transparent,
-            child: Chip(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              label: Text(
-                getFormattedDate(reminder.dateTime),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 6.0),
-        Chip(
-          backgroundColor: Theme.of(context).colorScheme.tertiary,
-          label: Text(
-            'weekly',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onTertiary,
-            ),
-          ),
-        ),
-        SizedBox(width: 8.0),
-      ],
     );
   }
 }

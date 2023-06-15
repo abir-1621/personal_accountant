@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:personal_accountant/enums/debt_type.dart';
 import 'package:provider/provider.dart';
 import '../controllers/hive_controller.dart';
 import '../enums/reminder_repeat.dart';
@@ -29,7 +30,6 @@ class _ReminderPageState extends State<ReminderPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-
   NotificationService notificationService = NotificationService();
   ReminderBox reminderBox = ReminderBox();
 
@@ -53,7 +53,6 @@ class _ReminderPageState extends State<ReminderPage> {
 
   void deleteReminder() {
     notificationService.cancelNotification(widget.reminder!.key);
-
     reminderBox.deleteReminder(widget.reminder!.key);
     Navigator.pop(context);
     Navigator.pop(context);
@@ -70,6 +69,7 @@ class _ReminderPageState extends State<ReminderPage> {
   Widget build(BuildContext context) {
     return Consumer<ReminderProvider>(
       builder: (context, value, child) {
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@$value");
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.isEdit ? 'Edit Reminder' : 'Create Reminder'),
@@ -96,8 +96,38 @@ class _ReminderPageState extends State<ReminderPage> {
             child: ListView(
               padding: EdgeInsets.all(8.0),
               children: [
+                Row(
+                  children: [
+                    Text('Type'),
+                    SizedBox(width: 20,),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _buildReminderType(value),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                Row(
+                  children: [
+                    Text('Repeat'),
+                    SizedBox(width: 8,),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _buildReminderRepeat(value),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8,),
                 MyTextFromField(
-                  labelText: 'Title',
+                  labelText: 'Name',
                   controller: titleController,
                   keyboardType: TextInputType.text,
                   onChanged: (str) => value.setTitle(str),
@@ -119,16 +149,6 @@ class _ReminderPageState extends State<ReminderPage> {
                   maxLines: null,
                 ),
                 SizedBox(height: 10.0),
-
-                Row(
-                  children: [
-                    Text('Repeat'),
-                    Spacer(),
-                    Wrap(
-                      children: _buildReminderRepeat(value),
-                    )
-                  ],
-                ),
 
                 //button to select date and time
                 Hero(
@@ -187,6 +207,33 @@ class _ReminderPageState extends State<ReminderPage> {
                 repeat.name,
                 style: TextStyle(
                   color: value.reminderRepeat == repeat
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
+              )),
+        ),
+      );
+    }
+    return widgets;
+  }
+
+
+  List<Widget> _buildReminderType(ReminderProvider value) {
+    List<Widget> widgets = [];
+    for (var repeat in ReminderType.values) {
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+          child: ChoiceChip(
+              onSelected: (_) {
+                value.setType(repeat);
+              },
+              selectedColor: Theme.of(context).colorScheme.primary,
+              selected: value.type == repeat,
+              label: Text(
+                repeat.name,
+                style: TextStyle(
+                  color: value.type == repeat
                       ? Theme.of(context).colorScheme.onPrimary
                       : Theme.of(context).colorScheme.onSecondaryContainer,
                 ),

@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:personal_accountant/enums/debt_type.dart';
 
 part 'reminder_model.g.dart';
 
@@ -16,10 +17,14 @@ class Reminder extends HiveObject {
   @HiveField(3)
   final bool isDone;
 
+  @HiveField(4)
+  final ReminderType? type;
+
   Reminder({
     required this.title,
     required this.description,
     required this.dateTime,
     this.isDone = false,
+    required this.type
   });
 }
